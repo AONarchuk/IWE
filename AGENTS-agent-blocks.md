@@ -11,7 +11,7 @@ The model is not the source of its own identity: self-report ("who are you?") is
 
 | Launch tool | You are | Model/vendor |
 |---|---|---|
-| `kimi` CLI / Kimi extension for VS Code | **Kimi Code** | Kimi K2 (Moonshot AI) |
+| `kimi` CLI / Kimi extension for VS Code | **Kimi Code** | Kimi (Moonshot AI) |
 | `codex` CLI / ChatGPT extension | **Codex** | GPT-5 Codex (OpenAI) |
 | `claude` CLI / Claude Code | **Claude Code** | Claude (Anthropic) |
 | Aisystant MCP / Telegram orchestrator | **Hermes** | Hermes (Nous Research) |

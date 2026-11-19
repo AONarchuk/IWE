@@ -93,7 +93,7 @@ If your agent has neither an `mcp add` CLI subcommand nor a config file for MCP 
 <agent> mcp list
 ```
 
-The output must show an `iwe-local-gateway` entry. If the agent supports direct MCP tool calls from chat, call `gateway_status` — the response should return `locks: []` (empty list of active locks) when no file is currently locked.
+For Kimi, use `/mcp` in an interactive session instead of a CLI subcommand. The output must show an `iwe-local-gateway` entry. If the agent supports direct MCP tool calls from chat, call `gateway_status` — the response should return `locks: []` (empty list of active locks) when no file is currently locked.
 
 ## Step 4. Configure Commit Attribution
 
@@ -106,13 +106,13 @@ Co-Authored-By: <Agent Name> <noreply@vendor-domain>
 For example:
 - `Co-Authored-By: Codex <noreply@openai.com>`
 - `Co-Authored-By: Hermes <noreply@aisystant.com>`
-- `Co-Authored-By: Kimi <noreply@moonshot.cn>`
+- `Co-Authored-By: Kimi <noreply@moonshot.ai>`
 
 If you are unsure of the correct vendor domain, use the agent product's official domain. On the first real commit, verify that the email does not look like a spam address and does not trigger errors in the Repository's git hooks.
 
 ## Step 5. Point the Agent to IWE Skills (Optional)
 
-If the agent has its own mechanism for loading additional instructions or skills (analogous to `.claude/skills/` in Claude Code), point it to the `.claude/skills/` directory of your Repository — the same way it is done for Kimi (`extra_skill_dirs` in `~/.kimi/config.toml`, see `docs/KIMI-SETUP.md`).
+If the agent has its own mechanism for loading additional instructions or skills (analogous to `.claude/skills/` in Claude Code), point it to the `.claude/skills/` directory of your Repository — the same way it is done for Kimi (`extra_skill_dirs` in `~/.kimi-code/config.toml`, see `docs/KIMI-SETUP.md`).
 
 If no such mechanism exists, skip this step — it does not block the rest of the agent's work.
 
@@ -122,14 +122,14 @@ If no such mechanism exists, skip this step — it does not block the rest of th
 
 ### 6.1. Check the MCP Config
 
-If your Repository's `.mcp.json` already contains an `iwe-knowledge` entry, it was created automatically by the installer (`setup.sh`). Open the file and inspect `url` and `headers`:
+If your Repository's `.mcp.json` already contains an `iwe-knowledge` entry, it was created automatically by the installer (`setup.sh`). Open the file and inspect `url` and `headers`. For Kimi, place the equivalent entry in `~/.kimi-code/mcp.json` or the project-local `.kimi-code/mcp.json`. Kimi also reads the project-root `.mcp.json`, so avoid declaring the same server in several files.
 
 - If `Authorization: Bearer ...` is present, authentication is already configured (this is typically the T3/T4 tier path via `IWE_ICT_TOKEN`) — a browser is not needed; proceed to Step 6.3.
-- If the header is absent, the server uses OAuth2. Authentication will occur on the agent's first real request to the server (not during `setup.sh`).
+- If the header is absent, the server uses OAuth2. Complete the client-specific login flow before the first real request.
 
 ### 6.2. OAuth2 Authorization: What to Watch For
 
-When the agent's MCP client first contacts the `iwe-knowledge` server, the server responds with an OAuth2 authorization request. This opens the **system default browser** (whichever browser is set as default in the OS — not necessarily the one you normally use).
+For Kimi, start `kimi` in a terminal and run `/mcp-config login iwe-knowledge` in the interactive terminal UI while it is idle. This command is not guaranteed to work in an IDE or desktop chat; an unrecognized slash command is sent to the agent as ordinary text. Start a new session after authorization. Other agents may start OAuth on the first real request. Authorization opens the **system default browser** (whichever browser is set as default in the OS — not necessarily the one you normally use).
 
 **Before connecting the agent, make sure you are already logged in to your aisystant account in the default browser.** If not, either log in first, or temporarily switch the default browser to one where you are already logged in for the duration of this step. Otherwise the authorization page will open in an empty or wrong session, and you will need to repeat the attempt after logging in.
 
@@ -155,7 +155,7 @@ Claude does not require changes to the Codex sandbox.
 
 By default, the Codex local sandbox blocks outbound network access and writes outside
 the working directory. Both Constraints matter: Kimi writes state to
-`~/.kimi`, Claude writes to `~/.claude` and `~/.claude.json`, and both clients call
+`~/.kimi-code`, Claude writes to `~/.claude` and `~/.claude.json`, and both clients call
 their respective APIs. These permissions are sufficient for Kimi, but on macOS they may
 be only necessary for Claude: its active authorization may be stored in the Keychain,
 which is inaccessible to a child process inside the sandbox. In the user-level
@@ -169,14 +169,14 @@ sandbox_mode = "workspace-write"
 [sandbox_workspace_write]
 network_access = true
 writable_roots = [
-  "<HOME_DIR>/.kimi",
+  "<HOME_DIR>/.kimi-code",
   "<HOME_DIR>/.claude",
   "<HOME_DIR>/.claude.json"
 ]
 ```
 
 Replace `<HOME_DIR>` with the actual home directory path. TOML does not expand
-`$HOME`, so a literal `"$HOME/.kimi"` does not work here. Existing root keys
+`$HOME`, so a literal `"$HOME/.kimi-code"` does not work here. Existing root keys
 `model` and `model_reasoning_effort` must remain above
 `[sandbox_workspace_write]`; otherwise TOML will assign them to the wrong section.
 

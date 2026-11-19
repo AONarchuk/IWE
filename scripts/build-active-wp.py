@@ -96,7 +96,7 @@ WP_NAME_RE = re.compile(r"^WP-(\d{1,4})(?:[-.].*|/)?$")
 HEADER_RE = re.compile(r"^\|\s*#\s*\|")
 _COLUMN_ALIASES = {
     "wp": {"#", "№"},
-    "name": {"name"},
+    "name": {"name", "title"},
     "status": {"status", "st"},
     "repo": {"repo"},
     "budget": {"budget"},
