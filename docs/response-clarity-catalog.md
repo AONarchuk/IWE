@@ -9,6 +9,8 @@ spec_for_hook_sha: 15a38b91
 type: reference
 ---
 
+<!-- index-health: skip — reference specification, not an index -->
+
 # Catalog: write for the human, not for the CI inspector
 
 This file is a specification that the mechanical detector `.claude/hooks/response-clarity-hook.sh` partially verifies (Stop hook, rules A1/A8/A10 from the list below). If the hook was updated after commit `15a38b91` above — check that the rules here have not diverged from what the hook actually catches.
